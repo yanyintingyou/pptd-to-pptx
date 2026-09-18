@@ -2,6 +2,8 @@
 
 [English](README.md) | **中文文档**
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 把 **Kimi / neo-design** 导出的声明式幻灯片工程（`.pptd` 主题 + `pages/*.page` 元素表 + `media/` 图片）转换为**完全可编辑的 PowerPoint 演示文稿**。
 
 几何**1:1** 还原——`.page` 用绝对坐标描述每一个元素，因此不存在重新排版、重排流或内容丢失。主题色、字号字体、三线表、LaTeX 公式、图形、连接线与图片全部保留。
@@ -99,6 +101,7 @@ python scripts/pdf2png.py <outdir>\<file>.pdf <shots-dir> 1.6
 ├── SKILL.md                # 操作手册（中文）
 ├── README.md               # 英文说明
 ├── README.zh-CN.md         # 本文件
+├── LICENSE                 # MIT 许可证
 └── scripts/
     ├── ppd2pptx.py         # 转换器本体
     └── pdf2png.py          # PDF → 逐页 PNG，用于校验
@@ -113,4 +116,6 @@ python scripts/pdf2png.py <outdir>\<file>.pdf <shots-dir> 1.6
 
 ## 许可证
 
-尚未包含许可证文件——再分发前请先补一个。
+本项目以 [MIT 许可证](LICENSE) 发布，© 2026 yanyintingyou。
+
+一句话说明：只要保留版权声明与许可证文本，你可以使用、修改、再分发乃至商业售卖这份代码。软件不提供任何担保。
