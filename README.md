@@ -2,6 +2,8 @@
 
 **English** | [中文文档](README.zh-CN.md)
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Convert declarative slide projects produced by **Kimi / neo-design** (`.pptd` theme + `pages/*.page` elements + `media/` images) into **fully editable PowerPoint decks**.
 
 Geometry is preserved **1:1** — the source `.page` format describes every element with absolute coordinates, so there is no re-layout, no re-flow and no content loss. Theme colors, font styles, three-line tables, LaTeX formulas, shapes, connectors and images all carry over.
@@ -99,6 +101,7 @@ Then inspect the PNGs page by page. `soffice` prints a `Could not find platform 
 ├── SKILL.md                # operational reference (Chinese)
 ├── README.md               # this file
 ├── README.zh-CN.md         # Chinese README
+├── LICENSE                 # MIT
 └── scripts/
     ├── ppd2pptx.py         # the converter
     └── pdf2png.py          # PDF -> per-page PNG, for verification
@@ -113,4 +116,6 @@ Then inspect the PNGs page by page. `soffice` prints a `Could not find platform 
 
 ## License
 
-No license file is included yet — add one before redistributing.
+Released under the [MIT License](LICENSE) © 2026 yanyintingyou.
+
+In short: you may use, modify, redistribute and sell this code, including commercially, as long as the copyright notice and the license text stay with it. The software comes with no warranty.
