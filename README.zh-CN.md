@@ -26,8 +26,11 @@ project/                      ->  deck.pptx（16:9，可编辑）
 需要 Python 3.9+ 与几个依赖：
 
 ```bash
-pip install python-pptx pillow pyyaml matplotlib
+pip install -r requirements.txt
 ```
+
+手动装也行：`pip install python-pptx pillow pyyaml matplotlib`。**别漏 `PyYAML`**——转换器在模块加载时就 import 它，缺了会立刻崩；
+`matplotlib` 只在"整块公式需要渲成图片"时才用到；`lxml` 随 `python-pptx` 一起装好；`pypdfium2` 只有可选的校验脚本需要。
 
 克隆本仓库即可；如果想当作技能用，把目录放进你所使用 agent 的技能目录，`SKILL.md` 就是操作手册。
 本仓库**不假定任何具体的 agent 框架**：文中所有路径与命令都是普通命令行示例，转换器也完全可以脱离 agent 当独立脚本跑。
@@ -83,6 +86,8 @@ python scripts/ppd2pptx.py <工程目录> <输出.pptx>
 
 `.pptd` 的 `customFonts` 指向 web 字体（URL），PowerPoint 用不了。脚本通过 `EA_MAP` 映射回本机已装字族：默认 `思源宋体 → 宋体`（Windows 通用），`黑体` 原样保留。目标机器确实装了思源宋体时，改 `EA_MAP` 即可。
 
+**跨平台提示：** 当前版本偏 Windows。`render_formula()` 注册的是 `C:\Windows\Fonts\simsun.ttc` / `times.ttf`，mathtext 字体名也写死 `SimSun` 与 `Times New Roman`。在 macOS / Linux 上**不会报错**，但 matplotlib 会静默回退到 DejaVu，**整块公式图片里的中文会变成方框**。纯文本、表格、图片不受影响（它们的东亚字体由 `EA_MAP` 控制）。要完全跨平台，需要把这两处改成按平台探测字体。
+
 ## 视觉校验
 
 `slidep screenshot` 依赖本地 editor SDK 服务，一般会失败。可靠的替代是 LibreOffice + pypdfium2：
@@ -103,6 +108,7 @@ python scripts/pdf2png.py <outdir>\<file>.pdf <shots-dir> 1.6
 ├── README.md               # 英文说明
 ├── README.zh-CN.md         # 本文件
 ├── LICENSE                 # MIT 许可证
+├── requirements.txt        # pip 依赖
 └── scripts/
     ├── ppd2pptx.py         # 转换器本体
     └── pdf2png.py          # PDF → 逐页 PNG，用于校验
