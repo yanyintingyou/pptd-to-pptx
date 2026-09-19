@@ -26,8 +26,10 @@ So this project uses a **deterministic `python-pptx` converter** instead. 1 px i
 Python 3.9+ and a few packages:
 
 ```bash
-pip install python-pptx pillow pyyaml matplotlib
+pip install -r requirements.txt
 ```
+
+Or manually: `pip install python-pptx pillow pyyaml matplotlib`. Don't skip `PyYAML` — the converter imports it at module load and dies immediately without it. `matplotlib` is only needed when a slide embeds a standalone formula as an image. `lxml` arrives with `python-pptx`, and `pypdfium2` is only needed by the optional verification helper.
 
 Clone the repo, or drop the folder into your agent's skills directory to use it as an installable skill — `SKILL.md` is the operational reference. No specific agent framework is assumed: every path in this repo is a plain command-line example, and the converter also runs perfectly well as a standalone script.
 
@@ -82,6 +84,8 @@ Inline math (`\(...\)`) is handled in two different ways depending on how it app
 
 The `customFonts` block in a `.pptd` points at web fonts (URLs), which PowerPoint cannot use. The script maps them back to installed families through `EA_MAP`; by default `思源宋体 → 宋体` (universally present on Windows) while `黑体` is kept as-is. Edit `EA_MAP` if the target machine really does have Source Han Serif.
 
+**Portability note:** the current version is Windows-oriented. `render_formula()` registers `C:\Windows\Fonts\simsun.ttc` / `times.ttf` and hard-codes the mathtext font names `SimSun` and `Times New Roman`. On macOS or Linux this does not raise an error — matplotlib silently falls back to DejaVu and **CJK inside embedded formula images renders as boxes**. Text, tables and pictures are unaffected, since their East-Asian face comes from `EA_MAP`. Making it fully cross-platform means turning those two spots into per-platform font detection.
+
 ## Visual verification
 
 `slidep screenshot` depends on a local editor SDK service and generally fails. A reliable substitute is LibreOffice plus pypdfium2:
@@ -102,6 +106,7 @@ Then inspect the PNGs page by page. `soffice` prints a `Could not find platform 
 ├── README.md               # this file
 ├── README.zh-CN.md         # Chinese README
 ├── LICENSE                 # MIT
+├── requirements.txt        # pip dependencies
 └── scripts/
     ├── ppd2pptx.py         # the converter
     └── pdf2png.py          # PDF -> per-page PNG, for verification
