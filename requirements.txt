@@ -1,0 +1,12 @@
+# Core converter dependencies
+python-pptx>=0.6.21
+pillow>=9.0
+PyYAML>=6.0
+
+# Only needed when a slide embeds a standalone LaTeX formula as an image
+# (ppd2pptx.render_formula uses matplotlib mathtext).
+matplotlib>=3.5
+
+# Optional: only for the visual-verification helper scripts/pdf2png.py
+# (PDF -> per-page PNG). Uncomment if you want to run that.
+# pypdfium2>=4.0
