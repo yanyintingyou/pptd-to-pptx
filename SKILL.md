@@ -46,9 +46,14 @@ version: "1.2.0"
 也可以完全脱离 agent，当独立脚本用：
 
 ```powershell
-pip install python-pptx
+pip install -r requirements.txt
+# 等价于：pip install python-pptx pillow pyyaml matplotlib   （校验另需 pypdfium2）
 python scripts/ppd2pptx.py <含 .pptd 的工程目录> <输出.pptx>
 ```
+
+**依赖别漏**：`python-pptx`、`pillow`、`pyyaml`，以及只在"整块公式转图片"时才用到的 `matplotlib`。
+少装 `pyyaml` 会在 `import yaml` 处直接崩，是换机部署最常见的坑；`scripts/pdf2png.py` 另外需要 `pypdfium2`。
+`lxml` 随 `python-pptx` 一起装好，无需单列。
 
 脚本自动找目录里唯一的 `.pptd`，按 `pages:` 顺序逐页生成，**全程只读源目录**。
 跑完在 `%TEMP%\_build_stats.txt` 写一份每页元素计数（`text/shape/line/image/table`）——
@@ -100,6 +105,11 @@ python scripts/ppd2pptx.py <含 .pptd 的工程目录> <输出.pptx>
 
 `.pptd` 的 `customFonts` 是 webfont（URL），PPT 用不了。脚本用 `EA_MAP` 做回退映射，
 默认 `思源宋体 → 宋体`（Windows 通用），`黑体` 原样保留。目标机器确实装了思源宋体时，改 `EA_MAP` 即可。
+
+**跨平台提示（当前版本偏 Windows）**：`render_formula()` 里注册字体用的是 `C:\Windows\Fonts\simsun.ttc`
+与 `times.ttf`，且 mathtext 字体名写死 `SimSun` / `Times New Roman`。在 macOS / Linux 上不会报错，
+但会被 matplotlib 回退成 DejaVu，**整块公式里的中文会渲染成方框**。纯文本/表格/图片页面不受影响
+（正文东亚字体由 `EA_MAP` 控制，改那里即可）。要在非 Windows 上完整使用，需要把这两处改成按平台探测字体。
 
 ## 七、视觉校验（slidep screenshot 不可用）
 
