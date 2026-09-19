@@ -2,7 +2,7 @@
 name: pptd-to-pptx
 description: 把 Kimi / neo-design 生成的声明式幻灯片工程目录（*.pptd 主题 + pages/*.page + media/）确定性转换为 PPTX。触发场景：用户给出含 .pptd 或 .page 文件的文件夹，要求"转成 pptx / 导出成 PPT / 变成幻灯片"；或需要只读地把这类第三方幻灯片工程落成可编辑的 .pptx。
 agent_created: true
-version: "1.1.0"
+version: "1.2.0"
 ---
 
 # pptd-to-pptx
@@ -42,7 +42,8 @@ version: "1.1.0"
 
 ## 三、安装与用法
 
-作为技能使用时，把本目录放到 `~/.workbuddy/skills/` 下即可；也可以当独立脚本用：
+作为技能使用时，把本目录放进你所使用 agent 的技能目录即可（各家 agent 的路径约定不同，本仓库不假定具体位置）；
+也可以完全脱离 agent，当独立脚本用：
 
 ```powershell
 pip install python-pptx
@@ -105,17 +106,36 @@ python scripts/ppd2pptx.py <含 .pptd 的工程目录> <输出.pptx>
 `slidep screenshot` 依赖 editor_sdk 本地服务，通常失败。可靠替代是 LibreOffice + pypdfium2：
 
 ```powershell
+Get-Process soffice* -EA SilentlyContinue | Stop-Process -Force -EA SilentlyContinue
+Remove-Item "<outdir>\*.pdf" -Force -EA SilentlyContinue      # 关键：先删旧 PDF
 & "C:\Program Files\LibreOffice\program\soffice.exe" --headless --norestore `
   --convert-to pdf --outdir <outdir> <file.pptx>
 python scripts/pdf2png.py <outdir>\<file>.pdf <shots-dir> 1.6
 ```
 
-然后逐页看 PNG 肉眼核对。soffice 会打一行 `Could not find platform independent libraries <prefix>`
-噪声，**不影响转换**。
+**必须先删旧 PDF，再核对 PDF 的修改时间晚于 pptx。**
+soffice 在已有 PDF 时可能打印 `Overwriting: ...` 却**实际没有覆盖**（进程/用户配置锁），于是你渲染的是上一版，
+会得到"明明改了源文件、导出结果没变"的假象。核对时间戳是唯一可靠的判据。
+
+**更省事的文本核对**（不渲染，先排除内容层问题）：
+
+```python
+from pptx import Presentation
+s = Presentation('out.pptx').slides[N-1]
+print([sh.text_frame.text for sh in s.shapes if sh.has_text_frame])
+```
+
+逐页排除内容问题后再看图，能省掉大量渲染往返。另外，读取图片时若怀疑渲染结果没更新
+（同路径图片可能被工具或系统缓存），把 PNG 复制成一个新文件名再读。
+
+soffice 会打一行 `Could not find platform independent libraries <prefix>` 噪声，**不影响转换**。
 
 ## 八、已知边界
 
 - 只认 `.pptd` + `.page`；不要拿 SlideDSL 工程或 `.pptx` 试。
+- **转换器是忠实的**：导出结果"看着不对"时，先回查源 `.page` 对应的 `text` / `bounds`，再怀疑脚本。
+  源端缺陷会被原样带出来（例：某次更新把目录页 n1–n5 五个章节号全写成 `"02"`，导出就是五条 "02"）。
+  确认是源端问题时**报告给作者、不要擅自改源**——改源还是对产物做后处理，由作者决定。
 - 行内分式为保可编辑性展成斜杠式，不做堆叠；只有独立成块的公式才贴图片。
 - PPT 的文字度量与浏览器略有差异，极端密集的页面可能有一两行溢出，需要回源文件微调 `bounds` 或文案。
 - Windows 上建议用 PowerShell 调用，命令输出重定向到文件再读，避免 stdout 丢失。
