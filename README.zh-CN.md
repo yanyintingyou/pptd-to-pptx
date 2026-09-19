@@ -29,7 +29,8 @@ project/                      ->  deck.pptx（16:9，可编辑）
 pip install python-pptx pillow pyyaml matplotlib
 ```
 
-克隆本仓库即可；如果想当作技能用，把目录放进 agent 的技能目录（如 `~/.workbuddy/skills/`），`SKILL.md` 是操作手册。
+克隆本仓库即可；如果想当作技能用，把目录放进你所使用 agent 的技能目录，`SKILL.md` 就是操作手册。
+本仓库**不假定任何具体的 agent 框架**：文中所有路径与命令都是普通命令行示例，转换器也完全可以脱离 agent 当独立脚本跑。
 
 ## 用法
 
