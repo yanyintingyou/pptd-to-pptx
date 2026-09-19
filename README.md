@@ -29,7 +29,7 @@ Python 3.9+ and a few packages:
 pip install python-pptx pillow pyyaml matplotlib
 ```
 
-Clone the repo, or drop the folder into your agent's skills directory (e.g. `~/.workbuddy/skills/`) to use it as an installable skill — `SKILL.md` is the operational reference.
+Clone the repo, or drop the folder into your agent's skills directory to use it as an installable skill — `SKILL.md` is the operational reference. No specific agent framework is assumed: every path in this repo is a plain command-line example, and the converter also runs perfectly well as a standalone script.
 
 ## Usage
 
